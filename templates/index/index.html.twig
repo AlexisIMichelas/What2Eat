@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello IndexController!
+{% endblock %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ asset('build/styles/_index.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container w-100 h-50">
+            <img src="{{ asset('build/images/3.png') }}" alt="food">
+            <h1 class="mt-4">Welcome to what to eat !</h1>
+</div>
+
+
+		<h2 class="text-center mt-4">what food u have ?
+			{% include '/FoodType.html.twig' %}
+		</h2>
+
+		{% if meal is not null %}
+			<h2 class="text-center mt-4">You can prepare:
+				{{ meal.name }}</h2>
+		{% else %}
+			<h2 class="text-center mt-4">You can't prepare any meal with the selected ingredients.</h2>
+		{% endif %}
+{% endblock %}
