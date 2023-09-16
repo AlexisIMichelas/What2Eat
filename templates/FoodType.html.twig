@@ -1,7 +1,4 @@
-{{ form_start(form) }}
-
-{{ form_widget(form.selectedIngredients) }}
-
-{{ form_rest(form) }}
-
+{{ form_start(form, {'attr': {'class': 'd-flex flex-column'}}) }}
+    {{ form_widget(form.selectedIngredients) }}
+    {{ form_rest(form) }}
 {{ form_end(form) }}

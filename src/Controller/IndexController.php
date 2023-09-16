@@ -2,16 +2,16 @@
 
 namespace App\Controller;
 
-// ...
-
-use App\Entity\Food;
-use App\Entity\Meal;
-use App\Form\FoodType;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+// Importez les entités nécessaires
+use App\Entity\Food;
+use App\Entity\Meal;
+use App\Form\FoodType;
+use Doctrine\ORM\EntityManagerInterface;
 
 class IndexController extends AbstractController
 {
@@ -20,6 +20,7 @@ class IndexController extends AbstractController
     {
         $form = $this->createForm(FoodType::class);
         $meal = null; // Initialisation à null
+        $selectedFoods = []; // Initialisez un tableau pour les aliments sélectionnés
 
         $form->handleRequest($request);
 
@@ -27,21 +28,31 @@ class IndexController extends AbstractController
             // Récupérez les données du formulaire
             $formData = $form->getData();
             
-            // Vérifiez quels ingrédients ont été sélectionnés
-            $selectedIngredients = $formData['selectedIngredients'];
+            // Vérifiez quels aliments ont été sélectionnés
+            $selectedFoods = $formData['selectedIngredients'];
 
             // Créez une nouvelle instance de Meal
             $meal = new Meal();
             
-            // Vérifiez si "Poulet" et "Tomate" sont parmi les ingrédients sélectionnés
-            if (in_array('Poulet', $selectedIngredients) && in_array('Tomate', $selectedIngredients)) {
-                $meal->setName('Poulet Basque'); // Si les deux ingrédients sont sélectionnés, attribuez le nom "Poulet Basque" au plat
+            // Vérifiez si "Poulet" et "Tomate" sont parmi les aliments sélectionnés
+            if (in_array('Poulet', $selectedFoods) && in_array('Tomate', $selectedFoods)) {
+                $meal->setName('Poulet Basque'); // Si les deux aliments sont sélectionnés, attribuez le nom "Poulet Basque" au plat
             } else {
-                // Traitez d'autres cas de correspondance d'ingrédients et attribuez le nom approprié à Meal
+                // Traitez d'autres cas de correspondance d'aliments et attribuez le nom approprié à Meal
             }
 
-            // Enregistrez la nouvelle instance de Meal (ou faites ce que vous voulez avec elle)
+            // Enregistrez la nouvelle instance de Meal en base de données
             $entityManager->persist($meal);
+            $entityManager->flush();
+
+            // Associez les aliments sélectionnés au plat (meal) et enregistrez-les en base de données
+            foreach ($selectedFoods as $foodName) {
+                $food = new Food();
+                $food->setName($foodName);
+                $food->setMeal($meal); // Associez l'aliment au plat
+                $entityManager->persist($food);
+            }
+
             $entityManager->flush();
 
             // Redirigez l'utilisateur ou effectuez une autre action ici
@@ -50,6 +61,7 @@ class IndexController extends AbstractController
         return $this->render('index/index.html.twig', [
             'form' => $form->createView(),
             'meal' => $meal,
+            'selectedFoods' => $selectedFoods,
         ]);
     }
 
