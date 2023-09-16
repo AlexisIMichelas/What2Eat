@@ -1,26 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello IndexController!
+{% block title %}What2eat
 {% endblock %}
 
 {% block body %}
-<div class="container">
     <div class="position-relative">
-        <img src="{{ asset('build/images/3.png') }}" alt="food" class="w-100">
-        <h1 class="position-absolute top-50 start-50 translate-middle text-center">Welcome to what to eat!</h1>
+        <img src="{{ asset('build/images/header.png') }}" alt="food" class="w-100">
+		{# Probleme import Yarn, je reprend #}
+        <h1 class="position-absolute top-50 start-50 translate-middle text-center text-white">Welcome to what to eat!</h1>
     </div>
-</div>
 
 
 <div class="text-center">
 		<h2 class="mt-4 mb-4">what food u have ?</h2>
 			{% include '/FoodType.html.twig' %}
 
+<div class="border mt-4 p-2 mx-5 bg-secondary">
 		{% if meal is not null %}
-			<h2>You can prepare:
+			<h2 class="text-white">You can prepare:
 				{{ meal.name }}</h2>
 		{% else %}
-			<h2 class="mt-4 mb-4">You can't prepare any meal with the selected ingredients.</h2>
+			<h2 class="text-white">You can't prepare any meal with the selected ingredients.</h2>
 		{% endif %}
+		</div>
 		</div>
 {% endblock %}

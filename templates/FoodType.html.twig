@@ -1,4 +1,12 @@
-{{ form_start(form, {'attr': {'class': 'd-flex flex-column'}}) }}
-    {{ form_widget(form.selectedIngredients) }}
+{{ form_start(form) }}
+
+{% for ingredient in form.selectedIngredients %}
+    {{ form_row(ingredient, {'attr': {'class': 'mb-2'}}) }}
+{% endfor %}
+
+<div class="mt-3">
     {{ form_rest(form) }}
+</div>
+
 {{ form_end(form) }}
+

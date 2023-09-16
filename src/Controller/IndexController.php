@@ -31,31 +31,24 @@ class IndexController extends AbstractController
             // Vérifiez quels aliments ont été sélectionnés
             $selectedFoods = $formData['selectedIngredients'];
 
-            // Créez une nouvelle instance de Meal
-            $meal = new Meal();
-            
-            // Vérifiez si "Poulet" et "Tomate" sont parmi les aliments sélectionnés
-            if (in_array('Poulet', $selectedFoods) && in_array('Tomate', $selectedFoods)) {
-                $meal->setName('Poulet Basque'); // Si les deux aliments sont sélectionnés, attribuez le nom "Poulet Basque" au plat
-            } else {
-                // Traitez d'autres cas de correspondance d'aliments et attribuez le nom approprié à Meal
+            // Utilisez une méthode de correspondance pour trouver une recette correspondante
+            $recipeName = $this->findMatchingRecipe($selectedFoods);
+
+            if ($recipeName) {
+                $meal = new Meal();
+                $meal->setName($recipeName);
+                $entityManager->persist($meal);
+
+                // Associez les aliments sélectionnés au plat (meal) et enregistrez-les en base de données
+                foreach ($selectedFoods as $foodName) {
+                    $food = new Food();
+                    $food->setName($foodName);
+                    $food->setMeal($meal);
+                    $entityManager->persist($food);
+                }
+
+                $entityManager->flush();
             }
-
-            // Enregistrez la nouvelle instance de Meal en base de données
-            $entityManager->persist($meal);
-            $entityManager->flush();
-
-            // Associez les aliments sélectionnés au plat (meal) et enregistrez-les en base de données
-            foreach ($selectedFoods as $foodName) {
-                $food = new Food();
-                $food->setName($foodName);
-                $food->setMeal($meal); // Associez l'aliment au plat
-                $entityManager->persist($food);
-            }
-
-            $entityManager->flush();
-
-            // Redirigez l'utilisateur ou effectuez une autre action ici
         }
 
         return $this->render('index/index.html.twig', [
@@ -66,9 +59,35 @@ class IndexController extends AbstractController
     }
 
     // ...
+
+    // Fonction pour trouver une recette correspondante en fonction des ingrédients sélectionnés
+    private function findMatchingRecipe($selectedFoods)
+    {
+        // Mettez en place la logique de correspondance des ingrédients et des recettes ici
+        if (in_array('Chicken', $selectedFoods) && in_array('Tomato', $selectedFoods)) {
+            return 'Basque chicken';
+        }
+        if (in_array('Beef', $selectedFoods) && in_array('Carrot', $selectedFoods) && in_array('Potatoe', $selectedFoods)) {
+            return 'Beef bourguignon';
+        }
+        if (in_array('Tomato', $selectedFoods) && in_array('Potatoe', $selectedFoods)) {
+            return 'Tomato soup';
+        }
+        if (in_array('Potatoe', $selectedFoods)&& in_array('Beef', $selectedFoods)) {
+            return 'Steak and fries';
+        }
+        if (in_array('Egg', $selectedFoods)&& in_array('Milk', $selectedFoods) && in_array('Cheese', $selectedFoods)) {
+            return 'Omelet';
+        }
+        if (in_array('Beef', $selectedFoods)&& in_array('Cheese', $selectedFoods) && in_array('Bread', $selectedFoods)) {
+            return 'Cheeseburger';
+        }
+
+        // Ajoutez d'autres correspondances d'ingrédients et de recettes ici
+        // Si aucune correspondance n'est trouvée, retournez null
+        return null;
+    }
 }
-
-
 
 
 
